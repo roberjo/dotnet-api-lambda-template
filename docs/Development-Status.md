@@ -91,18 +91,33 @@ This document tracks the current development status of the .NET API Lambda Templ
   - Rating and review system
   - Stock reservation and release functionality
 
+- [x] **Task 2.1.3**: Create Order entity (8h) ✅
+  - OrderStatus enum with comprehensive order states
+  - Order entity with comprehensive order management
+  - Order item collection with add/remove/update functionality
+  - Order totals calculation (subtotal, tax, shipping, discount)
+  - Order status workflow management
+  - Payment and shipping information tracking
+  - Order validation and business rules
+
+- [x] **Task 2.1.4**: Create OrderItem value object (4h) ✅
+  - OrderItem value object with product snapshot
+  - Quantity and pricing management
+  - Product attribute preservation at order time
+  - Weight and dimension tracking for shipping
+  - Order item validation and business logic
+
 ### 🚧 In Progress Tasks
 
-- [ ] **Task 2.1.3**: Create Order entity (8h)
-  - Order entity with order items
-  - Order status management
-  - Order totals and calculations
+- [ ] **Task 2.2.1**: Create User domain service (6h)
+  - User business logic and validation
+  - User lifecycle management
+  - User role and permission logic
 
 ### ⏳ Pending Tasks
 
 #### 2.1 Domain Entities
-- [ ] **Task 2.1.3**: Create Order entity (8h)
-- [ ] **Task 2.1.4**: Create OrderItem value object (4h)
+- ✅ All domain entities completed
 
 #### 2.2 Domain Services
 - [ ] **Task 2.2.1**: Create User domain service (6h)

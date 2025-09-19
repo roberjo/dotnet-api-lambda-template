@@ -23,8 +23,8 @@
 ### 2.1 Domain Entities
 - [x] **Task 2.1.1**: Create User entity (6h) ✅
 - [x] **Task 2.1.2**: Create Product entity (6h) ✅
-- [ ] **Task 2.1.3**: Create Order entity (8h)
-- [ ] **Task 2.1.4**: Create OrderItem value object (4h)
+- [x] **Task 2.1.3**: Create Order entity (8h) ✅
+- [x] **Task 2.1.4**: Create OrderItem value object (4h) ✅
 
 ### 2.2 Domain Services
 - [ ] **Task 2.2.1**: Create User domain service (6h)
