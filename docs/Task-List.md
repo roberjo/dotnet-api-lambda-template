@@ -27,9 +27,9 @@
 - [x] **Task 2.1.4**: Create OrderItem value object (4h) ✅
 
 ### 2.2 Domain Services
-- [ ] **Task 2.2.1**: Create User domain service (6h)
-- [ ] **Task 2.2.2**: Create Order domain service (8h)
-- [ ] **Task 2.2.3**: Create Product domain service (6h)
+- [x] **Task 2.2.1**: Create User domain service (6h) ✅
+- [x] **Task 2.2.2**: Create Order domain service (8h) ✅
+- [x] **Task 2.2.3**: Create Product domain service (6h) ✅
 
 ### 2.3 Domain Events
 - [ ] **Task 2.3.1**: Create domain event infrastructure (4h)

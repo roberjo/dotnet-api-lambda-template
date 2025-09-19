@@ -298,7 +298,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Serilog logging configuration
 - Application settings (Development, Production)
 
-**Phase 2: Domain Layer Implementation** - 🚧 **IN PROGRESS (75% Complete)**
+**Phase 2: Domain Layer Implementation** - 🚧 **IN PROGRESS (90% Complete)**
 - ✅ BaseEntity<TId> with common properties and methods
 - ✅ Email and FullName value objects with validation
 - ✅ User entity with comprehensive business logic
@@ -311,8 +311,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ OrderStatus enum with comprehensive order states
 - ✅ Order entity with order management and calculations
 - ✅ OrderItem value object with product snapshots
-- 🚧 Domain services (in progress)
-- ⏳ Additional domain events
+- ✅ User domain service with permissions and validation
+- ✅ Order domain service with business logic and calculations
+- ✅ Product domain service with inventory and pricing logic
+- 🚧 Domain event handlers (in progress)
 
 ### 📋 Upcoming Phases
 
@@ -329,12 +331,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### 📊 Current Metrics
 
-- **Overall Progress**: 31% (Phase 1 complete, Phase 2 75% complete)
+- **Overall Progress**: 35% (Phase 1 complete, Phase 2 90% complete)
 - **Build Status**: ✅ All projects build successfully
 - **Test Coverage**: Not yet measured (Phase 8)
 - **Documentation**: ✅ Comprehensive documentation created
 - **Domain Entities**: 4/4 completed (User ✅, Product ✅, Order ✅, OrderItem ✅)
-- **Domain Services**: 0/3 completed (User 🚧, Order ⏳, Product ⏳)
+- **Domain Services**: 3/3 completed (User ✅, Order ✅, Product ✅)
+- **Domain Events**: 1/2 completed (Infrastructure ✅, Handlers 🚧)
 
 ---
 
