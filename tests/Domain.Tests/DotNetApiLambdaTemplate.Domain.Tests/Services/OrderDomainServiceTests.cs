@@ -307,7 +307,14 @@ public class OrderDomainServiceTests
         var userEmail = Email.Create(email);
         var userName = FullName.Create(firstName, lastName);
 
-        return new User(userId, userName, userEmail, role, "System");
+        var user = new User(userId, userName, userEmail, role, "System");
+
+        if (!isActive)
+        {
+            user.Deactivate("System");
+        }
+
+        return user;
     }
 
     private static Order CreateTestOrder(
@@ -318,13 +325,21 @@ public class OrderDomainServiceTests
         var orderId = id ?? Guid.NewGuid();
         var orderCustomerId = customerId ?? Guid.NewGuid();
 
-        return new Order(
+        var order = new Order(
             orderId,
             "ORD-001",
             orderCustomerId,
             "test@example.com",
             "Test Customer",
             "System");
+
+        // Update status if it's not the default
+        if (status != OrderStatus.Pending)
+        {
+            order.UpdateStatus(status, "System");
+        }
+
+        return order;
     }
 
     private static OrderItem CreateTestOrderItem(

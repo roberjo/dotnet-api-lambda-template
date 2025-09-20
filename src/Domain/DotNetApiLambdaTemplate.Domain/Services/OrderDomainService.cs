@@ -76,11 +76,7 @@ public class OrderDomainService : IOrderDomainService
             throw new ArgumentException("OrderId cannot be empty", nameof(orderId));
 
         var order = await _orderRepository.GetByIdAsync(orderId, cancellationToken);
-        if (order == null)
-            return false;
-
-        // Can ship if order is confirmed or preparing
-        return order.Status == OrderStatus.Confirmed || order.Status == OrderStatus.Preparing;
+        return order?.CanBeShipped() ?? false;
     }
 
     /// <summary>
@@ -92,7 +88,7 @@ public class OrderDomainService : IOrderDomainService
             throw new ArgumentException("OrderId cannot be empty", nameof(orderId));
 
         var order = await _orderRepository.GetByIdAsync(orderId, cancellationToken);
-        return order?.Status == OrderStatus.Shipped;
+        return order?.CanBeDelivered() ?? false;
     }
 
     /// <summary>

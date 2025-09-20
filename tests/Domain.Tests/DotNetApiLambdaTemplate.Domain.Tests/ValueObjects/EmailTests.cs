@@ -29,27 +29,27 @@ public class EmailTests
     [InlineData("user@.com")]
     [InlineData("user..name@example.com")]
     [InlineData("user@example..com")]
-    public void From_WithInvalidEmail_ThrowsValidationException(string invalidEmail)
+    public void From_WithInvalidEmail_ThrowsArgumentException(string invalidEmail)
     {
         // Act & Assert
-        Assert.Throws<ValidationException>(() => Email.Create(invalidEmail));
+        Assert.Throws<ArgumentException>(() => Email.Create(invalidEmail));
     }
 
     [Fact]
-    public void From_WithNullEmail_ThrowsValidationException()
+    public void From_WithNullEmail_ThrowsArgumentException()
     {
         // Act & Assert
-        Assert.Throws<ValidationException>(() => Email.Create(null!));
+        Assert.Throws<ArgumentException>(() => Email.Create(null!));
     }
 
     [Fact]
-    public void From_WithEmailTooLong_ThrowsValidationException()
+    public void From_WithEmailTooLong_ThrowsArgumentException()
     {
         // Arrange
         var longEmail = new string('a', 250) + "@example.com"; // Over 255 characters
 
         // Act & Assert
-        Assert.Throws<ValidationException>(() => Email.Create(longEmail));
+        Assert.Throws<ArgumentException>(() => Email.Create(longEmail));
     }
 
     [Fact]

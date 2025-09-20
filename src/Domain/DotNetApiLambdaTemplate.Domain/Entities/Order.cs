@@ -487,6 +487,24 @@ public class Order : BaseEntity<Guid>
     }
 
     /// <summary>
+    /// Checks if the order can be shipped
+    /// </summary>
+    /// <returns>True if order can be shipped</returns>
+    public bool CanBeShipped()
+    {
+        return Status == OrderStatus.Confirmed;
+    }
+
+    /// <summary>
+    /// Checks if the order can be delivered
+    /// </summary>
+    /// <returns>True if order can be delivered</returns>
+    public bool CanBeDelivered()
+    {
+        return Status == OrderStatus.Shipped;
+    }
+
+    /// <summary>
     /// Checks if the order is completed
     /// </summary>
     /// <returns>True if order is completed</returns>

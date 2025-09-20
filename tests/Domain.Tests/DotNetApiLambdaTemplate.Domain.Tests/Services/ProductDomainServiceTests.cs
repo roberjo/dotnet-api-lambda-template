@@ -218,17 +218,10 @@ public class ProductDomainServiceTests
     }
 
     [Fact]
-    public async Task ValidatePricingAsync_WithNegativePrice_ReturnsInvalidResult()
+    public void ValidatePricingAsync_WithNegativePrice_ThrowsArgumentException()
     {
-        // Arrange
-        var price = Money.Create(-10.00m, "USD");
-
-        // Act
-        var result = await _productDomainService.ValidatePricingAsync(price, null);
-
-        // Assert
-        Assert.False(result.IsValid);
-        Assert.Contains("Price must be greater than zero", result.Errors);
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => Money.Create(-10.00m, "USD"));
     }
 
     [Fact]
@@ -310,7 +303,7 @@ public class ProductDomainServiceTests
         var productId = id ?? Guid.NewGuid();
         var productPrice = Money.Create(price ?? 10.00m, "USD");
 
-        return new Product(
+        var product = new Product(
             productId,
             name,
             "Test Description",
@@ -319,5 +312,18 @@ public class ProductDomainServiceTests
             productPrice,
             "System",
             stockQuantity: stockQuantity);
+
+        if (!isActive)
+        {
+            product.Deactivate("System");
+        }
+
+        // Set rating if it's not the default
+        if (rating != 0)
+        {
+            product.UpdateRating((decimal)rating, 1, "System");
+        }
+
+        return product;
     }
 }

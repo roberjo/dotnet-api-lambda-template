@@ -8,8 +8,12 @@ namespace DotNetApiLambdaTemplate.Domain.ValueObjects;
 public sealed class Email : IEquatable<Email>
 {
     private static readonly Regex EmailRegex = new(
-        @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+        @"^[a-zA-Z0-9]([a-zA-Z0-9._+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    private static readonly Regex ConsecutiveDotsRegex = new(
+        @"\.{2,}",
+        RegexOptions.Compiled);
 
     /// <summary>
     /// The email address value
@@ -34,7 +38,7 @@ public sealed class Email : IEquatable<Email>
 
         var trimmedEmail = email.Trim().ToLowerInvariant();
 
-        if (!EmailRegex.IsMatch(trimmedEmail))
+        if (!EmailRegex.IsMatch(trimmedEmail) || ConsecutiveDotsRegex.IsMatch(trimmedEmail))
             throw new ArgumentException($"Invalid email format: {email}", nameof(email));
 
         if (trimmedEmail.Length > 254)
