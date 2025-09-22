@@ -1,4 +1,5 @@
 using DotNetApiLambdaTemplate.Application.Common.Behaviors;
+using DotNetApiLambdaTemplate.Application.Common.Mappings;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,9 @@ public static class DependencyInjection
 
         // Add validation behavior
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+        // Add AutoMapper
+        services.AddAutoMapper(typeof(MappingProfile));
 
         return services;
     }

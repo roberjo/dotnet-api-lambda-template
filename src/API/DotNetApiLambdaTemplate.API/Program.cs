@@ -1,5 +1,11 @@
 using Serilog;
 using Serilog.Events;
+using DotNetApiLambdaTemplate.Application;
+using DotNetApiLambdaTemplate.Infrastructure;
+using DotNetApiLambdaTemplate.API.Middleware;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Text.Json;
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -12,7 +18,7 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.WithMachineName()
     .WriteTo.Console()
     .WriteTo.Debug()
-    .WriteTo.File("logs/dotnet-api-lambda-template-.txt", 
+    .WriteTo.File("logs/dotnet-api-lambda-template-.txt",
         rollingInterval: RollingInterval.Day,
         retainedFileCountLimit: 7,
         fileSizeLimitBytes: 10_000_000)
@@ -27,43 +33,133 @@ try
     // Configure Serilog
     builder.Host.UseSerilog();
 
-    // Add services to the container.
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    // Add services to the container
+    builder.Services.AddControllers();
+
+    // Add API Explorer and Swagger
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new()
+        {
+            Title = "DotNet API Lambda Template",
+            Version = "v1",
+            Description = "A comprehensive ASP.NET Core 8 Web API template for AWS Lambda deployment"
+        });
 
-var app = builder.Build();
+        // Include XML comments if available
+        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        if (File.Exists(xmlPath))
+        {
+            c.IncludeXmlComments(xmlPath);
+        }
+    });
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    // Add CORS
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+    });
 
-app.UseHttpsRedirection();
+    // Add Health Checks
+    builder.Services.AddHealthChecks()
+        .AddCheck("self", () => HealthCheckResult.Healthy(), new[] { "self" });
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    // Add Application Layer
+    builder.Services.AddApplication();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    // Add Infrastructure Layer
+    builder.Services.AddInfrastructure(builder.Configuration);
 
-app.Run();
+    // Add API Versioning
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+    });
+
+    // Add Response Compression
+    builder.Services.AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+    });
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "DotNet API Lambda Template v1");
+            c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+        });
+    }
+
+    // Add custom middleware
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
+    app.UseMiddleware<RequestLoggingMiddleware>();
+
+    // Add response compression
+    app.UseResponseCompression();
+
+    // Add CORS
+    app.UseCors("AllowAll");
+
+    // Add HTTPS redirection
+    app.UseHttpsRedirection();
+
+    // Add authentication and authorization
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    // Map controllers
+    app.MapControllers();
+
+    // Map health checks
+    app.MapHealthChecks("/health", new HealthCheckOptions
+    {
+        ResponseWriter = async (context, report) =>
+        {
+            context.Response.ContentType = "application/json";
+            var response = new
+            {
+                status = report.Status.ToString(),
+                checks = report.Entries.Select(entry => new
+                {
+                    name = entry.Key,
+                    status = entry.Value.Status.ToString(),
+                    description = entry.Value.Description,
+                    duration = entry.Value.Duration.TotalMilliseconds,
+                    exception = entry.Value.Exception?.Message
+                }),
+                duration = report.TotalDuration.TotalMilliseconds
+            };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+        }
+    });
+
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("ready")
+    });
+
+    app.MapHealthChecks("/health/live", new HealthCheckOptions
+    {
+        Predicate = _ => false
+    });
+
+    Log.Information("Application configured successfully");
+
+    app.Run();
 }
 catch (Exception ex)
 {
@@ -72,9 +168,4 @@ catch (Exception ex)
 finally
 {
     Log.CloseAndFlush();
-}
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

@@ -1,12 +1,12 @@
 using MediatR;
 using DotNetApiLambdaTemplate.Application.Common.DTOs;
 
-namespace DotNetApiLambdaTemplate.Application.Users.Queries.GetUsers;
+namespace DotNetApiLambdaTemplate.Application.Products.Queries.GetProducts;
 
 /// <summary>
-/// Query to get a paginated list of users
+/// Query to get a paginated list of products
 /// </summary>
-public class GetUsersQuery : IRequest<PaginatedResult<UserDto>>
+public class GetProductsQuery : IRequest<PaginatedResult<ProductDto>>
 {
     /// <summary>
     /// Page number (1-based)
@@ -19,14 +19,14 @@ public class GetUsersQuery : IRequest<PaginatedResult<UserDto>>
     public int PageSize { get; set; } = 10;
 
     /// <summary>
-    /// Search term to filter by name or email
+    /// Search term to filter by name, description, or SKU
     /// </summary>
     public string? SearchTerm { get; set; }
 
     /// <summary>
-    /// Filter by user role
+    /// Filter by category
     /// </summary>
-    public string? Role { get; set; }
+    public string? Category { get; set; }
 
     /// <summary>
     /// Filter by active status
@@ -34,7 +34,12 @@ public class GetUsersQuery : IRequest<PaginatedResult<UserDto>>
     public bool? IsActive { get; set; }
 
     /// <summary>
-    /// Sort by field (name, email, role, createdat, etc.)
+    /// Filter by featured status
+    /// </summary>
+    public bool? IsFeatured { get; set; }
+
+    /// <summary>
+    /// Sort by field (name, price, createdat, etc.)
     /// </summary>
     public string? SortBy { get; set; }
 
